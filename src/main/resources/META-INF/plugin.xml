@@ -1,0 +1,20 @@
+<idea-plugin>
+    <id>org.osipenko.pojo-booster</id>
+    <name>POJO Booster</name>
+    <vendor email="osipaandr@gmail.com">Osipenko</vendor>
+
+    <description><![CDATA[
+    Когда-нибудь эта штука сможет конвертировать pojo в полноценный DTO или Entity
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij"/>
+
+    <actions>
+        <action id="ConvertToEntityAction" class="ConvertToEntityAction" text="Convert To Entity">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt E"/>
+        </action>
+    </actions>
+</idea-plugin>
