@@ -10,9 +10,9 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij"/>
-
+<!-- TODO: Объединить action для DTO и Entity в одну группу -->
     <actions>
-        <action id="ConvertToEntityAction" class="ConvertToEntityAction" text="Convert To Entity">
+        <action id="toentity.ConvertToEntityAction" class="toentity.ConvertToEntityAction" text="Convert To Entity">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt E"/>
         </action>
