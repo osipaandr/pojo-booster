@@ -36,7 +36,7 @@ class ConverterToEntity(event: AnActionEvent) {
     private val visitor: JavaElementVisitor
 
     init {
-        class CustomVisitor : JavaElementVisitor() {
+        visitor = object : JavaElementVisitor() {
             override fun visitField(field: PsiField?) {
                 super.visitField(field)
                 processField(field!!)
@@ -47,7 +47,6 @@ class ConverterToEntity(event: AnActionEvent) {
                 method?.delete()
             }
         }
-        visitor = CustomVisitor()
 
         val psiFacade = JavaPsiFacade.getInstance(project)
         psiElementFactory = psiFacade.elementFactory
