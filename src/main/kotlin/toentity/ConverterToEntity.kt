@@ -19,6 +19,8 @@ class ConverterToEntity(event: AnActionEvent) {
             "lombok.Accessors(chain = true)"
         )
 
+        private const val idAnnotation = "javax.persistence.Id"
+
         private fun tableAnnotation(name: String): String =
             "javax.persistence.Table(name = \"$name\")"
 
@@ -68,16 +70,40 @@ class ConverterToEntity(event: AnActionEvent) {
         }
         val clazz = classes[0]
         WriteCommandAction.runWriteCommandAction(project) {
-            annotate(clazz)
+            // TODO: если нужные аннотации уже есть, то оставить в покое
+            annotateAsEntity(clazz)
             clazz.fields.forEach { it.accept(visitor) }
             clazz.methods.forEach { it.accept(visitor) }
+            checkId(clazz)
+            // TODO: если есть айдишник, то сделать его первым полем
         }
-
-        // TODO: если есть поле pid или id, аннотировать @Id. Если есть оба, нихрена не делать
-        //       если есть поле [имя_класса]_[id или pid], но нет id или pid, аннотировать его
     }
 
-    private fun annotate(clazz: PsiClass) {
+    private fun checkId(clazz: PsiClass) {
+        val findField: (String) -> PsiField? = { clazz.findFieldByName(it, false) }
+        val id = findField("id")
+        val pid = findField("pid")
+        if (id != null && pid != null) {
+            return
+        }
+        if (id != null) {
+            annotateAsId(id)
+            return
+        }
+        if (pid != null) {
+            annotateAsId(pid)
+            return
+        }
+        val className = clazz.name!!.decapitalize()
+        val namedId = findField("${className}Id") ?: findField("${className}Pid") ?: return
+        annotateAsId(namedId)
+    }
+
+    private fun annotateAsId(psiField: PsiField) {
+        psiField.modifierList?.addAnnotation(idAnnotation)
+    }
+
+    private fun annotateAsEntity(clazz: PsiClass) {
         val modifierList = clazz.modifierList!!
         val tableName = camelToUpperUnderscore(clazz.name!!)
         modifierList.addAnnotation(tableAnnotation(tableName))
