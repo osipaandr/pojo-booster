@@ -1,6 +1,4 @@
-// stringValue -> STRING_VALUE
-// TODO: сделать правильно
-fun toDatabaseFieldName(fieldName: String): String =
-    Regex("[A-Z]").split(fieldName)
-        .joinToString("_") { it.toUpperCase() }
+import com.google.common.base.CaseFormat
 
+fun camelToUpperUnderscore(fieldName: String): String =
+    CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, fieldName)

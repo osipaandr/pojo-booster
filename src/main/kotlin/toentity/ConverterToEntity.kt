@@ -1,16 +1,17 @@
 package toentity
 
+import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import toDatabaseFieldName
 
 class ConverterToEntity(event: AnActionEvent) {
 
     companion object {
         private val classAnnotations = arrayOf(
+            "lombok.EqualsAndHashCode(callSuper = true)",
             "lombok.NoArgsConstructor",
             "javax.persistence.Entity",
             "lombok.Setter",
@@ -27,10 +28,25 @@ class ConverterToEntity(event: AnActionEvent) {
 
     private val project = event.project!!
     private val timestampType: PsiClassType
+    private val dateType: PsiClassType
     private val instantType: PsiClassType
     private val psiElementFactory: PsiElementFactory
+    private val visitor: JavaElementVisitor
 
     init {
+        class CustomVisitor : JavaElementVisitor() {
+            override fun visitField(field: PsiField?) {
+                super.visitField(field)
+                processField(field!!)
+            }
+
+            override fun visitMethod(method: PsiMethod?) {
+                super.visitMethod(method)
+                method?.delete()
+            }
+        }
+        visitor = CustomVisitor()
+
         val psiFacade = JavaPsiFacade.getInstance(project)
         psiElementFactory = psiFacade.elementFactory
         val findType: (String) -> PsiClassType =
@@ -40,6 +56,7 @@ class ConverterToEntity(event: AnActionEvent) {
             }
         instantType = findType("java.time.Instant")
         timestampType = findType("java.sql.Timestamp")
+        dateType = findType("java.sql.Date")
     }
 
     fun convert(virtualFile: VirtualFile) {
@@ -52,42 +69,24 @@ class ConverterToEntity(event: AnActionEvent) {
         val clazz = classes[0]
         WriteCommandAction.runWriteCommandAction(project) {
             annotate(clazz)
-            visitFieldsAndMethods(clazz)
+            clazz.fields.forEach { it.accept(visitor) }
+            clazz.methods.forEach { it.accept(visitor) }
         }
 
         // TODO: если есть поле pid или id, аннотировать @Id. Если есть оба, нихрена не делать
         //       если есть поле [имя_класса]_[id или pid], но нет id или pid, аннотировать его
-        // TODO: сделать использование ломбока опциональным
-        // TODO: сделать меню настройки использования ломбока
-    }
-
-    private fun visitFieldsAndMethods(clazz: PsiClass) {
-        // TODO: эта херня реально почему-то не делает траверс, а останавливается на первом элементе. Исправить.
-        class MyVisitor : JavaRecursiveElementVisitor() {
-            override fun visitField(field: PsiField?) {
-                super.visitField(field)
-                processField(field!!)
-            }
-            override fun visitMethod(method: PsiMethod?) {
-                super.visitMethod(method)
-                method?.delete()
-            }
-        }
-        // TODO: задать Владу вопрос про это гавно
-        clazz.accept(MyVisitor())
     }
 
     private fun annotate(clazz: PsiClass) {
         val modifierList = clazz.modifierList!!
-        // TODO: конвертировать имя нормально
-        modifierList.addAnnotation(tableAnnotation(clazz.name!!))
+        val tableName = camelToUpperUnderscore(clazz.name!!)
+        modifierList.addAnnotation(tableAnnotation(tableName))
         classAnnotations.forEach { modifierList.addAnnotation(it) }
     }
 
     private fun processField(field: PsiField) {
-        // Аналогично для java.sql.Date
-        val type = if (field.type == timestampType) instantType else field.type
-        val annotationText = columnAnnotation(toDatabaseFieldName(field.name))
+        val type = if (field.type == timestampType || field.type == dateType) instantType else field.type
+        val annotationText = columnAnnotation(camelToUpperUnderscore(field.name))
         val newField = psiElementFactory.createField(field.name, type)
         newField.modifierList?.addAnnotation(annotationText)
         field.replace(newField)
