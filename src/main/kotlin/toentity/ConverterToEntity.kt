@@ -53,7 +53,7 @@ class ConverterToEntity(event: AnActionEvent) {
         val findType: (String) -> PsiClassType =
             {
                 val psiClass = psiFacade.findClass(it, GlobalSearchScope.allScope(project))
-                    ?: throw ClassNotFoundException("")
+                    ?: throw ClassNotFoundException("PsiClass ${it} wasn't found")
                 psiElementFactory.createType(psiClass)
             }
         instantType = findType("java.time.Instant")
