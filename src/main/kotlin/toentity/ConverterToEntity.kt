@@ -63,7 +63,6 @@ class ConverterToEntity(event: AnActionEvent) {
 
     fun convert(virtualFile: VirtualFile) {
         val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
-
         val classes = (psiFile as PsiJavaFile).classes
         if (classes.size != 1) {
             return
@@ -74,29 +73,35 @@ class ConverterToEntity(event: AnActionEvent) {
             annotateAsEntity(clazz)
             clazz.fields.forEach { it.accept(visitor) }
             clazz.methods.forEach { it.accept(visitor) }
-            checkId(clazz)
-            // TODO: если есть айдишник, то сделать его первым полем
+            checkId(clazz)?.let { rearrange(clazz, it) }
         }
     }
 
-    private fun checkId(clazz: PsiClass) {
+    private fun rearrange(clazz: PsiClass, id: PsiField) {
+        val indexToDrop = clazz.fields.indexOf(id) + 1
+        clazz.fields[indexToDrop].delete()
+        clazz.addBefore(id, clazz.fields[0])
+    }
+
+    private fun checkId(clazz: PsiClass): PsiField? {
         val findField: (String) -> PsiField? = { clazz.findFieldByName(it, false) }
         val id = findField("id")
         val pid = findField("pid")
-        when {
-            (id != null && pid != null) -> return
+        return when {
+            (id != null && pid != null) -> null
             (id != null) -> annotateAsId(id)
             (pid != null) -> annotateAsId(pid)
             else -> {
-                val className = clazz.name?.decapitalize() ?: return
-                val namedId = findField("${className}Id") ?: findField("${className}Pid") ?: return
+                val className = clazz.name?.decapitalize() ?: return null
+                val namedId = findField("${className}Id") ?: findField("${className}Pid") ?: return null
                 annotateAsId(namedId)
             }
         }
     }
 
-    private fun annotateAsId(psiField: PsiField) {
+    private fun annotateAsId(psiField: PsiField): PsiField {
         psiField.modifierList?.addAnnotation(idAnnotation)
+        return psiField
     }
 
     private fun annotateAsEntity(clazz: PsiClass) {
