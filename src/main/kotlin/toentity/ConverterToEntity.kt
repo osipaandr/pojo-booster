@@ -39,7 +39,7 @@ class ConverterToEntity(event: AnActionEvent) {
         visitor = object : JavaElementVisitor() {
             override fun visitField(field: PsiField?) {
                 super.visitField(field)
-                processField(field!!)
+                processField(field ?: return)
             }
 
             override fun visitMethod(method: PsiMethod?) {
@@ -52,7 +52,8 @@ class ConverterToEntity(event: AnActionEvent) {
         psiElementFactory = psiFacade.elementFactory
         val findType: (String) -> PsiClassType =
             {
-                val psiClass = psiFacade.findClass(it, GlobalSearchScope.allScope(project))!!
+                val psiClass = psiFacade.findClass(it, GlobalSearchScope.allScope(project))
+                    ?: throw ClassNotFoundException("")
                 psiElementFactory.createType(psiClass)
             }
         instantType = findType("java.time.Instant")
@@ -82,20 +83,16 @@ class ConverterToEntity(event: AnActionEvent) {
         val findField: (String) -> PsiField? = { clazz.findFieldByName(it, false) }
         val id = findField("id")
         val pid = findField("pid")
-        if (id != null && pid != null) {
-            return
+        when {
+            (id != null && pid != null) -> return
+            (id != null) -> annotateAsId(id)
+            (pid != null) -> annotateAsId(pid)
+            else -> {
+                val className = clazz.name?.decapitalize() ?: return
+                val namedId = findField("${className}Id") ?: findField("${className}Pid") ?: return
+                annotateAsId(namedId)
+            }
         }
-        if (id != null) {
-            annotateAsId(id)
-            return
-        }
-        if (pid != null) {
-            annotateAsId(pid)
-            return
-        }
-        val className = clazz.name!!.decapitalize()
-        val namedId = findField("${className}Id") ?: findField("${className}Pid") ?: return
-        annotateAsId(namedId)
     }
 
     private fun annotateAsId(psiField: PsiField) {
@@ -103,8 +100,8 @@ class ConverterToEntity(event: AnActionEvent) {
     }
 
     private fun annotateAsEntity(clazz: PsiClass) {
-        val modifierList = clazz.modifierList!!
-        val tableName = camelToUpperUnderscore(clazz.name!!)
+        val modifierList = clazz.modifierList ?: return
+        val tableName = camelToUpperUnderscore(clazz.name ?: return)
         modifierList.addAnnotation(tableAnnotation(tableName))
         classAnnotations.forEach { modifierList.addAnnotation(it) }
     }
