@@ -37,7 +37,7 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
 
     protected abstract fun boost(psiClass: PsiClass)
 
-    protected fun PsiField.withTypeChanged() : PsiField {
+    protected fun PsiField.withTypeChanged(): PsiField {
         if (type == timestampType || type == dateType) {
             val newField = psiElementFactory.createField(name, instantType)
             return replace(newField) as PsiField
@@ -69,8 +69,9 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
             (id != null) -> id
             (pid != null) -> pid
             else -> {
-                val className = name?.decapitalize() ?: return null
-                findField("${className}Id") ?: findField("${className}Pid")
+                name?.decapitalize()?.let {
+                    findField("${it}Id") ?: findField("${it}Pid")
+                }
             }
         }
     }
