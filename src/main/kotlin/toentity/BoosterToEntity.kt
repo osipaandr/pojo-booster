@@ -68,7 +68,7 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
 
     private fun processField(field: PsiField) {
         val annotationText = columnAnnotation(camelToUpperUnderscore(field.name))
-        withTypesChanged(field).modifierList
+        field.withTypeChanged().modifierList
             ?.addAnnotationIfNecessary(annotationText)
     }
 

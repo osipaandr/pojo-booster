@@ -37,12 +37,12 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
 
     protected abstract fun boost(psiClass: PsiClass)
 
-    protected fun withTypesChanged(field: PsiField) : PsiField {
-        if (field.type == timestampType || field.type == dateType) {
-            val newField = psiElementFactory.createField(field.name, instantType)
-            return field.replace(newField) as PsiField
+    protected fun PsiField.withTypeChanged() : PsiField {
+        if (type == timestampType || type == dateType) {
+            val newField = psiElementFactory.createField(name, instantType)
+            return replace(newField) as PsiField
         }
-        return field
+        return this
     }
 
     protected fun PsiModifierList.addAnnotationIfNecessary(annotationFullText: String): Boolean {
