@@ -11,8 +11,9 @@ class BoostToEntityAction : AnAction() {
     // TODO: проверить, можно ли плагином переключить настройки стиля
     //   (поставить спейсинг между полями = 1, потом реформатировать код и вернуть всё обратно)
     override fun actionPerformed(event: AnActionEvent) {
-        val psiFile = event.getData(PlatformDataKeys.PSI_FILE) ?: return
-        BoosterToEntity(event).boost(psiFile)
+        event.getData(PlatformDataKeys.PSI_FILE)?.let {
+            BoosterToEntity(event).boost(it)
+        }
     }
 
 }
