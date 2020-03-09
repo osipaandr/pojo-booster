@@ -11,9 +11,8 @@ class ConvertToEntityAction : AnAction() {
     // TODO: проверить, можно ли плагином переключить настройки стиля
     //   (поставить спейсинг между полями = 1, потом реформатировать код и вернуть всё обратно)
     override fun actionPerformed(event: AnActionEvent) {
-        // TODO: не VIRTUAL_FILE, а PSI_FILE
-        val virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
-        ConverterToEntity(event).convert(virtualFile)
+        val psiFile = event.getData(PlatformDataKeys.PSI_FILE) ?: return
+        ConverterToEntity(event).convert(psiFile)
     }
 
 }

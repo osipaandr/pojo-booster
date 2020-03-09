@@ -3,7 +3,6 @@ package toentity
 import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 
@@ -61,8 +60,7 @@ class ConverterToEntity(event: AnActionEvent) {
         dateType = findType("java.sql.Date")
     }
 
-    fun convert(virtualFile: VirtualFile) {
-        val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
+    fun convert(psiFile: PsiFile) {
         val classes = (psiFile as PsiJavaFile).classes
         if (classes.size != 1) {
             return
@@ -79,8 +77,8 @@ class ConverterToEntity(event: AnActionEvent) {
 
     private fun rearrange(clazz: PsiClass, id: PsiField) {
         val indexToDrop = clazz.fields.indexOf(id) + 1
-        clazz.fields[indexToDrop].delete()
         clazz.addBefore(id, clazz.fields[0])
+        clazz.fields[indexToDrop].delete()
     }
 
     private fun checkId(clazz: PsiClass): PsiField? {
