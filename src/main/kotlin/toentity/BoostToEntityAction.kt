@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 
-class ConvertToEntityAction : AnAction() {
+class BoostToEntityAction : AnAction() {
 
     // TODO: сделать использование ломбока опциональным
     // TODO: сделать меню настройки использования ломбока
@@ -12,7 +12,7 @@ class ConvertToEntityAction : AnAction() {
     //   (поставить спейсинг между полями = 1, потом реформатировать код и вернуть всё обратно)
     override fun actionPerformed(event: AnActionEvent) {
         val psiFile = event.getData(PlatformDataKeys.PSI_FILE) ?: return
-        ConverterToEntity(event).convert(psiFile)
+        BoosterToEntity(event).boost(psiFile)
     }
 
 }

@@ -6,7 +6,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 
-class ConverterToEntity(event: AnActionEvent) {
+class BoosterToEntity(event: AnActionEvent) {
 
     companion object {
         private val classAnnotations = arrayOf(
@@ -60,14 +60,13 @@ class ConverterToEntity(event: AnActionEvent) {
         dateType = findType("java.sql.Date")
     }
 
-    fun convert(psiFile: PsiFile) {
+    fun boost(psiFile: PsiFile) {
         val classes = (psiFile as PsiJavaFile).classes
         if (classes.size != 1) {
             return
         }
         val clazz = classes[0]
         WriteCommandAction.runWriteCommandAction(project) {
-            // TODO: если нужные аннотации уже есть, то оставить в покое
             annotateAsEntity(clazz)
             clazz.fields.forEach { it.accept(visitor) }
             clazz.methods.forEach { it.accept(visitor) }
@@ -98,22 +97,34 @@ class ConverterToEntity(event: AnActionEvent) {
     }
 
     private fun annotateAsId(psiField: PsiField): PsiField {
-        psiField.modifierList?.addAnnotation(idAnnotation)
+        psiField.modifierList?.addAnnotationIfNecessary(idAnnotation)
         return psiField
     }
 
     private fun annotateAsEntity(clazz: PsiClass) {
         val modifierList = clazz.modifierList ?: return
         val tableName = camelToUpperUnderscore(clazz.name ?: return)
-        modifierList.addAnnotation(tableAnnotation(tableName))
-        classAnnotations.forEach { modifierList.addAnnotation(it) }
+        with(modifierList) {
+            addAnnotationIfNecessary(tableAnnotation(tableName))
+            classAnnotations.forEach { addAnnotationIfNecessary(it) }
+        }
+    }
+    
+    private fun PsiModifierList.addAnnotationIfNecessary(annotationFullText: String): Boolean {
+        val annotation = annotationFullText.takeWhile { it != '(' }
+        if (hasAnnotation(annotation)) {
+            return false
+        }
+        addAnnotation(annotationFullText)
+        return true
     }
 
     private fun processField(field: PsiField) {
         val type = if (field.type == timestampType || field.type == dateType) instantType else field.type
         val annotationText = columnAnnotation(camelToUpperUnderscore(field.name))
         val newField = psiElementFactory.createField(field.name, type)
-        newField.modifierList?.addAnnotation(annotationText)
-        field.replace(newField)
+        if (newField.modifierList?.addAnnotationIfNecessary(annotationText) == true) {
+            field.replace(newField)
+        }
     }
 }
