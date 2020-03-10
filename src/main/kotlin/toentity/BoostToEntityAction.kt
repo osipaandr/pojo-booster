@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 
 class BoostToEntityAction : AnAction() {
 
-    // TODO: ограничить вызовы Java-файлами
     // TODO: сделать использование ломбока опциональным
     // TODO: сделать меню настройки использования ломбока
     // TODO: проверить, можно ли плагином переключить настройки стиля

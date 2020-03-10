@@ -31,11 +31,12 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
     }
 
     override fun boost(psiFile: PsiFile) {
-        val classes = (psiFile as PsiJavaFile).classes
-        if (classes.size != 1) {
+        if (psiFile !is PsiJavaFile) {
             return
         }
-        WriteCommandAction.runWriteCommandAction(project) { boost(classes[0]) }
+        if (psiFile.classes.size == 1) {
+            WriteCommandAction.runWriteCommandAction(project) { boost(psiFile.classes[0]) }
+        }
     }
 
     protected abstract fun boost(psiClass: PsiClass)
