@@ -3,10 +3,8 @@ package toentity
 import AbstractPojoBooster
 import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMethod
 
 class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
 
@@ -29,23 +27,10 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
             "javax.persistence.Column(name = \"$fieldName\")"
     }
 
-    private val visitor = object : JavaElementVisitor() {
-        override fun visitField(field: PsiField?) {
-            super.visitField(field)
-            field?.let { processField(it) }
-        }
-
-        override fun visitMethod(method: PsiMethod?) {
-            super.visitMethod(method)
-            // TODO: удалять только геттеры и сеттеры
-            method?.delete()
-        }
-    }
-
     override fun boost(psiClass: PsiClass) {
         annotateAsEntity(psiClass)
-        psiClass.fields.forEach(visitor::visitField)
-        psiClass.methods.forEach(visitor::visitMethod)
+        psiClass.fields.forEach(::processField)
+        psiClass.methods.forEach { it.deleteIfAccessor() }
         checkId(psiClass)?.let { psiClass.putFirst(it) }
     }
 

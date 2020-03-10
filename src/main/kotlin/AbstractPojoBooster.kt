@@ -6,6 +6,10 @@ import com.intellij.psi.search.GlobalSearchScope
 
 abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
 
+    companion object {
+        private const val ACCESSOR_PREFIX_LENGTH = 3
+    }
+
     protected val project = event.project!!
     protected val timestampType: PsiClassType
     protected val dateType: PsiClassType
@@ -71,6 +75,19 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
                 val decapitatedName = name?.decapitalize()
                 decapitatedName?.let { findField("${it}Id") ?: findField("${it}Pid") }
             }
+        }
+    }
+
+    protected fun PsiMethod.isAccessor(): Boolean {
+        return (name.startsWith("get") ||
+                name.startsWith("set")) &&
+                null != containingClass?.findFieldByName(
+                    name.substring(ACCESSOR_PREFIX_LENGTH).decapitalize(), true)
+    }
+
+    protected fun PsiMethod.deleteIfAccessor() {
+        if (isAccessor()) {
+            delete()
         }
     }
 }
