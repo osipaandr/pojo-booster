@@ -44,7 +44,8 @@ class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
     }
 
     private fun processField(field: PsiField) {
-        field.withTypeChanged().modifierList?.let {
+        val modifiers = field.withTypeChanged().modifierList
+        modifiers?.let {
             if (!it.hasAnnotation(jsonIgnore)) {
                 it.addAnnotationIfNecessary(jsonProperty(field.name))
             }

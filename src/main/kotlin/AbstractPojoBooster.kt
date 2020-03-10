@@ -31,9 +31,7 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
         if (classes.size != 1) {
             return
         }
-        WriteCommandAction.runWriteCommandAction(project) {
-            boost(classes[0])
-        }
+        WriteCommandAction.runWriteCommandAction(project) { boost(classes[0]) }
     }
 
     protected abstract fun boost(psiClass: PsiClass)
@@ -66,13 +64,12 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
         val id = findField("id")
         val pid = findField("pid")
         return when {
-            (id != null && pid != null) -> null
-            (id != null) -> id
-            (pid != null) -> pid
+            id != null && pid != null -> null
+            id != null -> id
+            pid != null -> pid
             else -> {
-                name?.decapitalize()?.let {
-                    findField("${it}Id") ?: findField("${it}Pid")
-                }
+                val decapitatedName = name?.decapitalize()
+                decapitatedName?.let { findField("${it}Id") ?: findField("${it}Pid") }
             }
         }
     }

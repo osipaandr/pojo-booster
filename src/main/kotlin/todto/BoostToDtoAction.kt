@@ -6,8 +6,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 
 class BoostToDtoAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
-        event.getData(PlatformDataKeys.PSI_FILE)?.let {
-            BoosterToDto(event).boost(it)
-        }
+        val psiFile = event.getData(PlatformDataKeys.PSI_FILE)
+        psiFile?.let { BoosterToDto(event).boost(it) }
     }
 }
