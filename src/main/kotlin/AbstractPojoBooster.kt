@@ -73,8 +73,8 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
             id != null -> id
             pid != null -> pid
             else -> {
-                val decapitatedName = name?.decapitalize()
-                decapitatedName?.let { findField("${it}Id") ?: findField("${it}Pid") }
+                val decapitalizedName = name?.decapitalize()
+                decapitalizedName?.let { findField("${it}Id") ?: findField("${it}Pid") }
             }
         }
     }
