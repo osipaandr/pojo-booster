@@ -15,5 +15,4 @@ class BoostToEntityAction : AnAction() {
             BoosterToEntity(event).boost(it)
         }
     }
-
 }

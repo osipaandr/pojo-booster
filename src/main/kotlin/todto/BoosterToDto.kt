@@ -50,5 +50,4 @@ class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
             }
         }
     }
-
 }

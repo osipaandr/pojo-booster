@@ -71,5 +71,4 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
         field.withTypeChanged().modifierList
             ?.addAnnotationIfNecessary(annotationText)
     }
-
 }

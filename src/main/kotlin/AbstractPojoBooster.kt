@@ -1,6 +1,7 @@
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.*
+
 import com.intellij.psi.search.GlobalSearchScope
 
 abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
