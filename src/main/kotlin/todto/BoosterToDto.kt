@@ -10,7 +10,7 @@ class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
 
     companion object {
         private val classAnnotations = arrayOf(
-            // TODO: подумать, может, нужно что-то ещё
+            "lombok.EqualsAndHashCode(callSuper = true)",
             "lombok.Data"
         )
 
@@ -30,10 +30,9 @@ class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
 
     private fun processField(field: PsiField) {
         val modifiers = field.withTypeChanged().modifierList
-        modifiers?.let {
-            if (!it.hasAnnotation(jsonIgnore)) {
-                it.addAnnotationIfNecessary(jsonProperty(field.name))
-            }
+        modifiers ?: return
+        if (!modifiers.hasAnnotation(jsonIgnore)) {
+            modifiers.addAnnotationIfNecessary(jsonProperty(field.name))
         }
     }
 }

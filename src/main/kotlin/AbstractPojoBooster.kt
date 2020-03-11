@@ -79,16 +79,13 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
         }
     }
 
-    protected fun PsiMethod.isAccessor(): Boolean {
-        return (name.startsWith("get") ||
-                name.startsWith("set")) &&
-                null != containingClass?.findFieldByName(
-                    name.substring(ACCESSOR_PREFIX_LENGTH).decapitalize(), true)
-    }
+    protected fun PsiMethod.isAccessor() =
+        (name.startsWith("get") || name.startsWith("set")) &&
+                containingClass?.findFieldByName(
+                    name.substring(ACCESSOR_PREFIX_LENGTH).decapitalize(), true
+                ) != null
 
     protected fun PsiMethod.deleteIfAccessor() {
-        if (isAccessor()) {
-            delete()
-        }
+        if (isAccessor()) delete()
     }
 }
