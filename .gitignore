@@ -2,3 +2,4 @@
 /.gradle/
 /.idea/
 /src/main/resources/sample-pojo.txt
+/gradle/wrapper/gradle-wrapper.properties
