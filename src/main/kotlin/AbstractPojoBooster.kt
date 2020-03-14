@@ -1,6 +1,9 @@
+import com.intellij.application.options.CodeStyle
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 
 import com.intellij.psi.search.GlobalSearchScope
 
@@ -34,9 +37,22 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
         if (psiFile !is PsiJavaFile) {
             return
         }
-        if (psiFile.classes.size == 1) {
-            WriteCommandAction.runWriteCommandAction(project) { boost(psiFile.classes[0]) }
+        if (psiFile.classes.size != 1) return
+        WriteCommandAction.runWriteCommandAction(project) {
+            val psiClass = psiFile.classes[0]
+            boost(psiClass)
+            createIntends(psiClass)
         }
+    }
+
+    private fun createIntends(psiClass: PsiClass) {
+        val codeStyleSettings = CodeStyle.getSettings(project)
+            .getCommonSettings(JavaLanguage.INSTANCE)
+        val oldIntends = codeStyleSettings.BLANK_LINES_AROUND_FIELD
+        codeStyleSettings.BLANK_LINES_AROUND_FIELD = 1
+        CodeStyleManager.getInstance(project)
+            .reformat(psiClass)
+        codeStyleSettings.BLANK_LINES_AROUND_FIELD = oldIntends
     }
 
     protected abstract fun boost(psiClass: PsiClass)
