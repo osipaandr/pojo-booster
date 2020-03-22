@@ -1,10 +1,10 @@
 package todto
 
-import AbstractPojoBooster
-import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
+import common.AbstractPojoBooster
+import common.camelToUpperUnderscore
 
 class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
 

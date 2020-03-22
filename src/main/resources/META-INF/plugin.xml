@@ -9,17 +9,19 @@
 
     <depends>com.intellij.modules.platform</depends>
 
-    <extensions defaultExtensionNs="com.intellij"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <projectConfigurable instance="settings.SettingsManager"/>
+    </extensions>
 
     <actions>
-        <group text="POJO Booster" id="PojoBooster" popup="true">
+        <group text="POJO Booster" id="common.PojoBooster" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <action id="toentity.BoostToEntityAction" class="toentity.BoostToEntityAction" text="Boost To Entity">
-                <add-to-group group-id="PojoBooster" anchor="first"/>
+                <add-to-group group-id="common.PojoBooster" anchor="first"/>
                 <keyboard-shortcut keymap="$default" first-keystroke="alt E"/>
             </action>
             <action id="todto.BoostToDtoAction" class="todto.BoostToDtoAction" text="Boost To DTO">
-                <add-to-group group-id="PojoBooster" anchor="first"/>
+                <add-to-group group-id="common.PojoBooster" anchor="first"/>
                 <keyboard-shortcut keymap="$default" first-keystroke="alt D"/>
             </action>
         </group>

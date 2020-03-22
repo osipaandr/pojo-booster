@@ -1,10 +1,11 @@
+package common
+
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
-
 import com.intellij.psi.search.GlobalSearchScope
 
 abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
