@@ -5,6 +5,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import common.AbstractPojoBooster
 import common.camelToUpperUnderscore
+import settings.SettingsManager
 
 class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
 
@@ -21,10 +22,12 @@ class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
     }
 
     override fun boost(psiClass: PsiClass) {
-        val modifierList = psiClass.modifierList ?: return
-        classAnnotations.forEach { modifierList.addAnnotationIfNecessary(it) }
+        if (SettingsManager.getLombokUsage()) {
+            val modifierList = psiClass.modifierList ?: return
+            classAnnotations.forEach { modifierList.addAnnotationIfNecessary(it) }
+            psiClass.methods.forEach { it.deleteIfAccessor() }
+        }
         psiClass.fields.forEach(::processField)
-        psiClass.methods.forEach { it.deleteIfAccessor() }
         psiClass.findIdField()?.let { psiClass.putFirst(it) }
     }
 

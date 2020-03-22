@@ -26,5 +26,5 @@ object SettingsManager : Configurable {
         return settingsForm?.settingsPanel
     }
 
-    private fun getLombokUsage() = storedProperties.getBoolean(USE_LOMBOK, true)
+    fun getLombokUsage() = storedProperties.getBoolean(USE_LOMBOK)
 }
