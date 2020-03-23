@@ -9,11 +9,9 @@ object SettingsManager : Configurable {
 
     private const val USE_LOMBOK = "USE_LOMBOK"
     private var settingsForm: SettingsForm? = null
-    private var storedProperties = PropertiesComponent.getInstance()
+    private val storedProperties = PropertiesComponent.getInstance()
 
-    override fun isModified(): Boolean {
-        return settingsForm?.useLombok() != getLombokUsage()
-    }
+    override fun isModified() = settingsForm?.useLombok() != getLombokUsage()
 
     override fun getDisplayName() = "POJO Booster"
 
@@ -26,5 +24,5 @@ object SettingsManager : Configurable {
         return settingsForm?.settingsPanel
     }
 
-    fun getLombokUsage() = storedProperties.getBoolean(USE_LOMBOK)
+    fun getLombokUsage(): Boolean = storedProperties.getBoolean(USE_LOMBOK)
 }
