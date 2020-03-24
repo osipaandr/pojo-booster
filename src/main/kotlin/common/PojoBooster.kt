@@ -1,3 +1,5 @@
+package common
+
 import com.intellij.psi.PsiFile
 
 interface PojoBooster {

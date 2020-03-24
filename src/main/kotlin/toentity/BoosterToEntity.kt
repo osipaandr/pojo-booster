@@ -1,10 +1,11 @@
 package toentity
 
-import AbstractPojoBooster
-import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
+import common.AbstractPojoBooster
+import common.camelToUpperUnderscore
+import settings.SettingsManager
 
 class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
 
@@ -12,12 +13,11 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
         private val classAnnotations = arrayOf(
             "lombok.EqualsAndHashCode(callSuper = true)",
             "lombok.NoArgsConstructor",
-            "javax.persistence.Entity",
             "lombok.Setter",
             "lombok.Getter",
             "lombok.Accessors(chain = true)"
         )
-
+        private const val entityAnnotation = "javax.persistence.Entity"
         private const val idAnnotation = "javax.persistence.Id"
 
         private fun tableAnnotation(name: String) =
@@ -30,7 +30,9 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
     override fun boost(psiClass: PsiClass) {
         annotateAsEntity(psiClass)
         psiClass.fields.forEach(::processField)
-        psiClass.methods.forEach { it.deleteIfAccessor() }
+        if (SettingsManager.getLombokUsage()) {
+            psiClass.methods.forEach { it.deleteIfAccessor() }
+        }
         checkId(psiClass)?.let { psiClass.putFirst(it) }
     }
 
@@ -47,7 +49,10 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
         val tableName = camelToUpperUnderscore(clazz.name ?: return)
         with(modifierList) {
             addAnnotationIfNecessary(tableAnnotation(tableName))
-            classAnnotations.forEach { addAnnotationIfNecessary(it) }
+            addAnnotationIfNecessary(entityAnnotation)
+            if (SettingsManager.getLombokUsage()) {
+                classAnnotations.forEach { addAnnotationIfNecessary(it) }
+            }
         }
     }
 
