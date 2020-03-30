@@ -14,15 +14,19 @@
     </extensions>
 
     <actions>
-        <group text="POJO Booster" id="common.PojoBooster" popup="true">
+        <group text="POJO Booster" id="booster.common.PojoBooster" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
-            <action id="toentity.BoostToEntityAction" class="toentity.BoostToEntityAction" text="Boost To Entity">
-                <add-to-group group-id="common.PojoBooster" anchor="first"/>
+            <action id="booster.toentity.BoostToEntityAction" class="booster.toentity.BoostToEntityAction" text="Boost To Entity">
+                <add-to-group group-id="booster.common.PojoBooster" anchor="first"/>
                 <keyboard-shortcut keymap="$default" first-keystroke="alt E"/>
             </action>
-            <action id="todto.BoostToDtoAction" class="todto.BoostToDtoAction" text="Boost To DTO">
-                <add-to-group group-id="common.PojoBooster" anchor="first"/>
+            <action id="booster.todto.BoostToDtoAction" class="booster.todto.BoostToDtoAction" text="Boost To DTO">
+                <add-to-group group-id="booster.common.PojoBooster" anchor="first"/>
                 <keyboard-shortcut keymap="$default" first-keystroke="alt D"/>
+            </action>
+            <action id="generator.action.GenerationAction" class="generator.action.GenerationAction" text="Generate POJO">
+                <add-to-group group-id="booster.common.PojoBooster" anchor="first"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="alt G"/>
             </action>
         </group>
     </actions>

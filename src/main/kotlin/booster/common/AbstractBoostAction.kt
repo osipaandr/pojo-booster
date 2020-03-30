@@ -1,4 +1,4 @@
-package common
+package booster.common
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

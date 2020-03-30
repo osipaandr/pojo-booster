@@ -1,7 +1,7 @@
-package toentity
+package booster.toentity
 
+import booster.common.AbstractBoostAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import common.AbstractBoostAction
 
 class BoostToEntityAction : AbstractBoostAction() {
 

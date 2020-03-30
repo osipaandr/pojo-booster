@@ -1,10 +1,10 @@
-package toentity
+package booster.toentity
 
+import booster.common.AbstractPojoBooster
+import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
-import common.AbstractPojoBooster
-import common.camelToUpperUnderscore
 import settings.SettingsManager
 
 class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {

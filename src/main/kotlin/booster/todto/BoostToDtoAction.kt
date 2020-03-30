@@ -1,7 +1,7 @@
-package todto
+package booster.todto
 
+import booster.common.AbstractBoostAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import common.AbstractBoostAction
 
 class BoostToDtoAction : AbstractBoostAction() {
 

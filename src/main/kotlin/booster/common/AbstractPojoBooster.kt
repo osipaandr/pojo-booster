@@ -1,4 +1,4 @@
-package common
+package booster.common
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.java.JavaLanguage

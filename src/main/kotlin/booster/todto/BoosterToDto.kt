@@ -1,10 +1,10 @@
-package todto
+package booster.todto
 
+import booster.common.AbstractPojoBooster
+import camelToUpperUnderscore
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
-import common.AbstractPojoBooster
-import common.camelToUpperUnderscore
 import settings.SettingsManager
 
 class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
@@ -35,7 +35,11 @@ class BoosterToDto(event: AnActionEvent) : AbstractPojoBooster(event) {
         val modifiers = field.withTypeChanged().modifierList
         modifiers ?: return
         if (!modifiers.hasAnnotation(jsonIgnore)) {
-            modifiers.addAnnotationIfNecessary(jsonProperty(field.name))
+            modifiers.addAnnotationIfNecessary(
+                jsonProperty(
+                    field.name
+                )
+            )
         }
     }
 }

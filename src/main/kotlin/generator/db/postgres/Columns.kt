@@ -1,4 +1,4 @@
-package db
+package generator.db.postgres
 
 import org.jetbrains.exposed.sql.Table
 
