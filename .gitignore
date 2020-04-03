@@ -3,5 +3,4 @@
 /.idea/
 /src/main/resources/sample-pojo.txt
 /gradle/wrapper/gradle-wrapper.properties
-/config/detekt/detekt.yml
 /path/to/destination.html
