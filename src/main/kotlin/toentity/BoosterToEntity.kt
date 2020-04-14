@@ -11,11 +11,12 @@ class BoosterToEntity(event: AnActionEvent) : AbstractPojoBooster(event) {
 
     companion object {
         private val classAnnotations = arrayOf(
-            "lombok.EqualsAndHashCode(callSuper = true)",
+            "lombok.AllArgsConstructor",
             "lombok.NoArgsConstructor",
+            "lombok.Builder",
             "lombok.Setter",
             "lombok.Getter",
-            "lombok.Accessors(chain = true)"
+            "lombok.experimental.Accessors(chain = true)"
         )
         private const val entityAnnotation = "javax.persistence.Entity"
         private const val idAnnotation = "javax.persistence.Id"

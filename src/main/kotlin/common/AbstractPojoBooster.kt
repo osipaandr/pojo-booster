@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
 
 abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
@@ -43,6 +44,8 @@ abstract class AbstractPojoBooster(event: AnActionEvent) : PojoBooster {
             val psiClass = psiFile.classes[0]
             boost(psiClass)
             createIntends(psiClass)
+            JavaCodeStyleManager.getInstance(project)
+                .shortenClassReferences(psiFile)
         }
     }
 
